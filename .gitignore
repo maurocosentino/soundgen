@@ -1,2 +1,17 @@
+# Build
+build/
 cmake-build-*/
+
+# Binario compilado
+soundgen
+
+# WAVs
+examples/*.wav
+
+# IDE
 .idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
