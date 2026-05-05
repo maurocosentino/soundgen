@@ -12,6 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(soundgen
         src/main.cpp
+        src/cli/CommandParser.cpp
         src/audio/WaveGenerator.cpp
         src/wav/WavWriter.cpp
 )

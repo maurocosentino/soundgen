@@ -1,39 +1,40 @@
 #include <iostream>
-#include "audio/AudioBuffer.h"
+#include <stdexcept>
+#include "cli/CommandParser.h"
 #include "audio/WaveGenerator.h"
 #include "wav/WavWriter.h"
 
 int main(int argc, char* argv[]) {
+    using namespace soundgen;
 
-    if (argc < 2) {
-        std::cout << "Uso: soundgen <comando> [opciones]\n";
+    try {
+        // 1. Parsear argumentos
+        const ParsedCommand cmd = CommandParser::parse(argc, argv);
+
+        // 2. Generar audio
+        std::cout << "Generando " << cmd.generatorConfig.duration << "s de audio"
+                  << " a " << cmd.generatorConfig.frequency << " Hz...\n";
+
+        const AudioBuffer buffer = WaveGenerator::generate(cmd.generatorConfig);
+
+        // 3. Escribir WAV
+        std::cout << "Escribiendo: " << cmd.outputPath << "\n";
+        WavWriter::write(buffer, cmd.outputPath);
+
+        std::cout << "Listo! ("
+                  << buffer.size() << " samples, "
+                  << buffer.durationSeconds() << "s)\n";
+
+        return 0;
+
+    } catch (const std::invalid_argument& e) {
+        const std::string msg(e.what());
+        if (msg == "__help__") return 0;  // salida limpia
+        std::cerr << "Error: " << msg << "\n";
         return 1;
+
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 2;
     }
-
-    const std::string subcommand = argv[1];
-
-    if (subcommand == "generate") {
-
-        soundgen::GeneratorConfig config;
-        config.waveType  = soundgen::WaveType::Sine;
-        config.frequency = 440.0;
-        config.duration  = 2.0;
-
-        std::cout << "Generando audio...\n";
-        soundgen::AudioBuffer buffer = soundgen::WaveGenerator::generate(config);
-
-        std::cout << "Samples: " << buffer.size() << "\n";
-        std::cout << "Duracion: " << buffer.durationSeconds() << "s\n";
-
-        std::cout << "Escribiendo tone.wav...\n";
-        soundgen::WavWriter::write(buffer, "tone.wav");
-
-        std::cout << "Listo!\n";
-
-    } else {
-        std::cerr << "Error: comando desconocido '" << subcommand << "'\n";
-        return 1;
-    }
-
-    return 0;
 }
