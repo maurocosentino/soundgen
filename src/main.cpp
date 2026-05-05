@@ -1,6 +1,7 @@
 #include <iostream>
 #include "audio/AudioBuffer.h"
 #include "audio/WaveGenerator.h"
+#include "wav/WavWriter.h"
 
 int main(int argc, char* argv[]) {
 
@@ -16,18 +17,18 @@ int main(int argc, char* argv[]) {
         soundgen::GeneratorConfig config;
         config.waveType  = soundgen::WaveType::Sine;
         config.frequency = 440.0;
-        config.duration  = 1.0;
+        config.duration  = 2.0;
 
+        std::cout << "Generando audio...\n";
         soundgen::AudioBuffer buffer = soundgen::WaveGenerator::generate(config);
 
-        std::cout << "Buffer generado:\n";
-        std::cout << "  Samples: "   << buffer.size()            << "\n";
-        std::cout << "  Duracion: "  << buffer.durationSeconds() << "s\n";
-        std::cout << "  Primeros 5 valores:\n";
+        std::cout << "Samples: " << buffer.size() << "\n";
+        std::cout << "Duracion: " << buffer.durationSeconds() << "s\n";
 
-        for (size_t i = 0; i < 5; ++i) {
-            std::cout << "    [" << i << "] = " << buffer.samples[i] << "\n";
-        }
+        std::cout << "Escribiendo tone.wav...\n";
+        soundgen::WavWriter::write(buffer, "tone.wav");
+
+        std::cout << "Listo!\n";
 
     } else {
         std::cerr << "Error: comando desconocido '" << subcommand << "'\n";

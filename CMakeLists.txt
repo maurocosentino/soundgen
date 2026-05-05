@@ -13,6 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(soundgen
         src/main.cpp
         src/audio/WaveGenerator.cpp
+        src/wav/WavWriter.cpp
 )
 
 # Directorios de includes
